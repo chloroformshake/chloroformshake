@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 export default function PortfolioPage() {
   const [mounted, setMounted] = useState(false)
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(false)
   const [isJerking, setIsJerking] = useState(false)
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function PortfolioPage() {
 
   const handleThemeToggle = () => {
     setIsJerking(true)
-    setTimeout(() => setIsJerking(false), 400)
+    setTimeout(() => setIsJerking(false), 300)
     setIsDark(!isDark)
   }
 
@@ -83,12 +83,11 @@ export default function PortfolioPage() {
           75% { transform: translateX(5px); }
         }
 
-        @keyframes jerk {
-          0% { transform: rotate(-3deg) scale(0.98); }
-          25% { transform: rotate(2deg) scale(1.02); }
-          50% { transform: rotate(-2deg) scale(0.99); }
-          75% { transform: rotate(3deg) scale(1.01); }
-          100% { transform: rotate(0deg) scale(1); }
+        /* Updated jerk animation for smooth jumpscare effect - rapid scale with rotation */
+        @keyframes jerk-jumpscare {
+          0% { transform: scale(1) rotate(0deg); }
+          50% { transform: scale(1.08) rotate(-2deg); }
+          100% { transform: scale(1) rotate(0deg); }
         }
 
         .animate-spin360 {
@@ -119,8 +118,9 @@ export default function PortfolioPage() {
           animation: shake 0.5s ease-in-out infinite;
         }
 
+        /* Smooth fast jumpscare animation - 250ms for smooth speed */
         .jerk-all {
-          animation: jerk 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          animation: jerk-jumpscare 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .symbol {
@@ -131,19 +131,29 @@ export default function PortfolioPage() {
           transition: color 0.5s ease;
         }
 
+        /* Mobile-first toggle button styles */
         .toggle-btn {
           position: fixed;
-          top: 20px;
-          right: 20px;
+          top: 12px;
+          right: 12px;
           z-index: 50;
-          padding: 12px 20px;
+          padding: 10px 16px;
           border-radius: 50px;
           font-weight: 700;
-          font-size: 14px;
+          font-size: 12px;
           border: none;
           cursor: pointer;
           transition: all 0.3s ease;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (min-width: 768px) {
+          .toggle-btn {
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            font-size: 14px;
+          }
         }
 
         .toggle-btn:hover {
@@ -201,13 +211,11 @@ export default function PortfolioPage() {
         )
       })}
 
-      {/* Main container */}
       <div
-        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-8 px-4 ${isJerking ? "jerk-all" : ""}`}
+        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-8 px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
       >
-        {/* Title */}
         <h1
-          className={`text-7xl md:text-9xl font-black ${themeColors.title} mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""}`}
+          className={`text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black ${themeColors.title} mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
           style={{
             animation: "slide-in 1s ease-out",
             textShadow: isDark ? "4px 4px 0px rgba(255,255,255,0.1)" : "2px 2px 0px rgba(0,0,0,0.1)",
@@ -216,29 +224,33 @@ export default function PortfolioPage() {
           chloroformshake
         </h1>
 
-        {/* Author section */}
         <div
-          className={`mb-16 text-center transition-all duration-500 ${isJerking ? "jerk-all" : ""}`}
+          className={`mb-10 sm:mb-16 text-center transition-all duration-500 ${isJerking ? "jerk-all" : ""}`}
           style={{ animation: "float 3s ease-in-out infinite" }}
         >
-          <h2 className={`text-3xl font-bold ${themeColors.author} drop-shadow-lg transition-colors duration-500`}>
+          <h2
+            className={`text-xl sm:text-2xl md:text-3xl font-bold ${themeColors.author} drop-shadow-lg transition-colors duration-500`}
+          >
             siddharth kushwaha
           </h2>
-          <p className={`text-2xl ${themeColors.authorSubtext} opacity-50 transition-colors duration-500`}>
+          <p
+            className={`text-lg sm:text-xl md:text-2xl ${themeColors.authorSubtext} opacity-50 transition-colors duration-500`}
+          >
             siddharth kushwaha
           </p>
         </div>
 
-        {/* Gallery grid - overlapping chaotic layout */}
-        <div className={`relative w-full max-w-6xl h-[600px] mb-8 ${isJerking ? "jerk-all" : ""}`}>
+        <div
+          className={`relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto ${isJerking ? "jerk-all" : ""}`}
+        >
           {/* Image 1 - Top left */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              left: "10%",
+              left: "5%",
               top: "0%",
-              width: "224px",
-              height: "192px",
+              width: "clamp(120px, 15vw, 224px)",
+              height: "clamp(120px, 15vw, 192px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
@@ -250,19 +262,19 @@ export default function PortfolioPage() {
 
           {/* Image 2 - Center top */}
           <div
-            className="rounded-lg shadow-2xl border-4 border-white transition-all duration-500"
+            className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              left: "35%",
-              top: "-10%",
-              width: "256px",
-              height: "224px",
+              left: "30%",
+              top: "-5%",
+              width: "clamp(140px, 18vw, 256px)",
+              height: "clamp(140px, 18vw, 224px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
                 : "linear-gradient(135deg, #faa5a5 0%, #f5a5a5 100%)",
               animation: "spin360 5s linear infinite",
               animationDelay: "0.2s",
-              borderColor: isDark ? "#fff" : "#333",
+              border: `3px solid ${isDark ? "#fff" : "#333"}`,
             }}
           />
 
@@ -270,10 +282,10 @@ export default function PortfolioPage() {
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              right: "10%",
+              right: "5%",
               top: "5%",
-              width: "240px",
-              height: "208px",
+              width: "clamp(130px, 17vw, 240px)",
+              height: "clamp(130px, 17vw, 208px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
@@ -287,10 +299,10 @@ export default function PortfolioPage() {
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              left: "5%",
-              bottom: "10%",
-              width: "208px",
-              height: "240px",
+              left: "0%",
+              bottom: "5%",
+              width: "clamp(110px, 14vw, 208px)",
+              height: "clamp(130px, 17vw, 240px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
@@ -304,10 +316,10 @@ export default function PortfolioPage() {
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              left: "38%",
+              left: "35%",
               bottom: "0%",
-              width: "256px",
-              height: "192px",
+              width: "clamp(140px, 18vw, 256px)",
+              height: "clamp(120px, 15vw, 192px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
@@ -321,10 +333,10 @@ export default function PortfolioPage() {
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
-              right: "8%",
-              bottom: "15%",
-              width: "224px",
-              height: "224px",
+              right: "0%",
+              bottom: "10%",
+              width: "clamp(120px, 15vw, 224px)",
+              height: "clamp(120px, 15vw, 224px)",
               position: "absolute",
               background: isDark
                 ? "linear-gradient(135deg, #fa8b00 0%, #ffc107 100%)"
@@ -340,8 +352,8 @@ export default function PortfolioPage() {
             style={{
               left: "50%",
               top: "50%",
-              width: "192px",
-              height: "224px",
+              width: "clamp(120px, 15vw, 192px)",
+              height: "clamp(140px, 18vw, 224px)",
               position: "absolute",
               transform: "translate(-50%, -50%)",
               background: isDark
@@ -354,8 +366,10 @@ export default function PortfolioPage() {
         </div>
 
         {/* Footer decoration */}
-        <div className={`mt-16 text-center opacity-30 transition-colors duration-500 ${isJerking ? "jerk-all" : ""}`}>
-          <p className={`text-sm ${themeColors.footer}`}>☞ theme toggle enabled ☜</p>
+        <div
+          className={`mt-10 sm:mt-16 text-center opacity-30 transition-colors duration-500 ${isJerking ? "jerk-all" : ""}`}
+        >
+          <p className={`text-xs sm:text-sm ${themeColors.footer}`}>☞ theme toggle enabled ☜</p>
         </div>
       </div>
     </div>
