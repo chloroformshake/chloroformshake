@@ -6,20 +6,36 @@ export default function PortfolioPage() {
   const [mounted, setMounted] = useState(false)
   const [isDark, setIsDark] = useState(false)
   const [isJerking, setIsJerking] = useState(false)
+  const [toggleCount, setToggleCount] = useState(0)
+  const [showWarning, setShowWarning] = useState(false)
+  const [isScaryMode, setIsScaryMode] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const handleThemeToggle = () => {
+    if (isScaryMode) return
+
+    if (toggleCount === 0) {
+      setIsJerking(true)
+      setTimeout(() => setIsJerking(false), 300)
+      setIsDark(true)
+      setToggleCount(1)
+    } else if (toggleCount === 1) {
+      setShowWarning(true)
+    }
+  }
+
+  const handleWarningClick = () => {
+    setIsScaryMode(true)
+    setShowWarning(false)
     setIsJerking(true)
     setTimeout(() => setIsJerking(false), 300)
-    setIsDark(!isDark)
   }
 
   if (!mounted) return null
 
-  // Scattered $f$ symbols positions
   const symbols = Array.from({ length: 30 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
@@ -29,17 +45,22 @@ export default function PortfolioPage() {
   }))
 
   const themeColors = {
-    bg: isDark ? "bg-black" : "bg-white",
-    title: isDark ? "text-black" : "text-gray-900",
-    author: isDark ? "text-red-500" : "text-red-600",
-    authorSubtext: isDark ? "text-gray-400" : "text-gray-500",
-    symbolColor: isDark ? "#22ff00" : "#ff006e",
-    symbolGlow: isDark ? "rgba(34, 255, 0, 0.5)" : "rgba(255, 0, 110, 0.4)",
-    footer: isDark ? "text-gray-400" : "text-gray-600",
+    bg: isScaryMode ? "#8b0000" : isDark ? "bg-black" : "bg-white",
+    title: isScaryMode ? "#ff0000" : isDark ? "text-black" : "text-gray-900",
+    author: isScaryMode ? "#cc0000" : isDark ? "text-red-500" : "text-red-600",
+    authorSubtext: isScaryMode ? "#990000" : isDark ? "text-gray-400" : "text-gray-500",
+    symbolColor: isScaryMode ? "#ff0000" : isDark ? "#22ff00" : "#ff006e",
+    symbolGlow: isScaryMode ? "rgba(255, 0, 0, 0.8)" : isDark ? "rgba(34, 255, 0, 0.5)" : "rgba(255, 0, 110, 0.4)",
+    footer: isScaryMode ? "#660000" : isDark ? "text-gray-400" : "text-gray-600",
   }
 
   return (
-    <div className={`relative w-full min-h-screen ${themeColors.bg} overflow-hidden transition-colors duration-500`}>
+    <div
+      className={`relative w-full min-h-screen overflow-hidden transition-colors duration-500`}
+      style={{
+        backgroundColor: isScaryMode ? "#8b0000" : isDark ? "#000" : "#fff",
+      }}
+    >
       <style>{`
         @keyframes spin360 {
           0% { transform: rotate(0deg); }
@@ -67,6 +88,11 @@ export default function PortfolioPage() {
           50% { transform: scale(1.1); }
         }
 
+        @keyframes pulse-scale-frozen {
+          0% { transform: scale(1.1); }
+          100% { transform: scale(1.1); }
+        }
+
         @keyframes slide-in {
           0% { transform: translateX(-100%); opacity: 0; }
           100% { transform: translateX(0); opacity: 1; }
@@ -83,7 +109,6 @@ export default function PortfolioPage() {
           75% { transform: translateX(5px); }
         }
 
-        /* Updated jerk animation for smooth jumpscare effect - rapid scale with rotation */
         @keyframes jerk-jumpscare {
           0% { transform: scale(1) rotate(0deg); }
           50% { transform: scale(1.08) rotate(-2deg); }
@@ -118,7 +143,10 @@ export default function PortfolioPage() {
           animation: shake 0.5s ease-in-out infinite;
         }
 
-        /* Smooth fast jumpscare animation - 250ms for smooth speed */
+        .animate-frozen {
+          animation: pulse-scale-frozen 0.1s ease-out forwards;
+        }
+
         .jerk-all {
           animation: jerk-jumpscare 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -131,7 +159,6 @@ export default function PortfolioPage() {
           transition: color 0.5s ease;
         }
 
-        /* Mobile-first toggle button styles */
         .toggle-btn {
           position: fixed;
           top: 12px;
@@ -173,23 +200,81 @@ export default function PortfolioPage() {
           background: linear-gradient(135deg, #ff006e 0%, #ff0055 100%);
           color: #fff;
         }
+
+        .warning-box {
+          position: fixed;
+          top: 70px;
+          right: 12px;
+          background: rgba(255, 0, 0, 0.9);
+          color: white;
+          padding: 12px 16px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          z-index: 51;
+          max-width: 200px;
+          box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+          animation: slide-in 0.3s ease-out;
+          border: 2px solid #ff0000;
+          text-align: center;
+        }
+
+        @media (min-width: 768px) {
+          .warning-box {
+            top: 80px;
+            right: 20px;
+            font-size: 13px;
+            padding: 14px 18px;
+            max-width: 220px;
+          }
+        }
+
+        .warning-btn {
+          background: #ffff00;
+          color: #000;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-weight: 700;
+          font-size: 11px;
+          cursor: pointer;
+          margin-top: 8px;
+          transition: all 0.2s ease;
+        }
+
+        .warning-btn:hover {
+          background: #ffffff;
+          transform: scale(1.05);
+        }
       `}</style>
 
-      <button onClick={handleThemeToggle} className={`toggle-btn ${isDark ? "toggle-btn-dark" : "toggle-btn-light"}`}>
-        {isDark ? "☀️ BRIGHT" : "🌙 DARK"}
-      </button>
+      {!isScaryMode && (
+        <button onClick={handleThemeToggle} className={`toggle-btn ${isDark ? "toggle-btn-dark" : "toggle-btn-light"}`}>
+          {isDark ? "☀️ BRIGHT" : "🌙 DARK"}
+        </button>
+      )}
 
-      {/* Scattered $f$ symbols with crazy animations */}
+      {showWarning && (
+        <div className="warning-box">
+          <p>⚠️ AVOID CHANGING TO DARK MODE AGAIN</p>
+          <button className="warning-btn" onClick={handleWarningClick}>
+            I UNDERSTAND
+          </button>
+        </div>
+      )}
+
       {symbols.map((symbol) => {
-        const animations = [
-          "animate-spin360",
-          "animate-bounce3d",
-          "animate-float",
-          "animate-wiggle",
-          "animate-pulse-scale",
-          "animate-skew",
-          "animate-shake",
-        ]
+        const animations = isScaryMode
+          ? ["animate-frozen"]
+          : [
+              "animate-spin360",
+              "animate-bounce3d",
+              "animate-float",
+              "animate-wiggle",
+              "animate-pulse-scale",
+              "animate-skew",
+              "animate-shake",
+            ]
         const randomAnimation = animations[Math.floor(Math.random() * animations.length)]
 
         return (
@@ -215,26 +300,32 @@ export default function PortfolioPage() {
         className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-8 px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
       >
         <h1
-          className={`text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black ${themeColors.title} mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
+          className={`text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
           style={{
             animation: "slide-in 1s ease-out",
-            textShadow: isDark ? "4px 4px 0px rgba(255,255,255,0.1)" : "2px 2px 0px rgba(0,0,0,0.1)",
+            color: themeColors.title,
+            textShadow: isScaryMode
+              ? "4px 4px 0px rgba(0,0,0,0.8)"
+              : isDark
+                ? "4px 4px 0px rgba(255,255,255,0.1)"
+                : "2px 2px 0px rgba(0,0,0,0.1)",
           }}
         >
           chloroformshake
         </h1>
 
         <div
-          className={`mb-10 sm:mb-16 text-center transition-all duration-500 ${isJerking ? "jerk-all" : ""}`}
-          style={{ animation: "float 3s ease-in-out infinite" }}
+          className={`mb-10 sm:mb-16 text-center transition-all duration-500 ${isJerking ? "jerk-all" : ""} ${isScaryMode ? "" : "animate-float"}`}
         >
           <h2
-            className={`text-xl sm:text-2xl md:text-3xl font-bold ${themeColors.author} drop-shadow-lg transition-colors duration-500`}
+            className={`text-xl sm:text-2xl md:text-3xl font-bold drop-shadow-lg transition-colors duration-500`}
+            style={{ color: themeColors.author }}
           >
             siddharth kushwaha
           </h2>
           <p
-            className={`text-lg sm:text-xl md:text-2xl ${themeColors.authorSubtext} opacity-50 transition-colors duration-500`}
+            className={`text-lg sm:text-xl md:text-2xl opacity-50 transition-colors duration-500`}
+            style={{ color: themeColors.authorSubtext }}
           >
             siddharth kushwaha
           </p>
@@ -243,7 +334,6 @@ export default function PortfolioPage() {
         <div
           className={`relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto ${isJerking ? "jerk-all" : ""}`}
         >
-          {/* Image 1 - Top left */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -260,7 +350,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 2 - Center top */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -278,7 +367,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 3 - Top right */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -295,7 +383,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 4 - Bottom left */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -312,7 +399,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 5 - Bottom center */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -329,7 +415,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 6 - Bottom right */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -346,7 +431,6 @@ export default function PortfolioPage() {
             }}
           />
 
-          {/* Image 7 - Center */}
           <div
             className="rounded-lg shadow-2xl transition-all duration-500"
             style={{
@@ -365,11 +449,10 @@ export default function PortfolioPage() {
           />
         </div>
 
-        {/* Footer decoration */}
         <div
           className={`mt-10 sm:mt-16 text-center opacity-30 transition-colors duration-500 ${isJerking ? "jerk-all" : ""}`}
         >
-          <p className={`text-xs sm:text-sm ${themeColors.footer}`}>☞ theme toggle enabled ☜</p>
+          <p style={{ color: themeColors.footer }}>☞ theme toggle enabled ☜</p>
         </div>
       </div>
     </div>
