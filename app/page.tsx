@@ -10,6 +10,35 @@ export default function PortfolioPage() {
   const [showWarning, setShowWarning] = useState(false)
   const [isScaryMode, setIsScaryMode] = useState(false)
 
+  const cfs_images = [
+    "cfs-logos/1.webp",
+    "cfs-logos/2.webp",
+    "cfs-logos/1.webp",
+    "cfs-logos/2.webp",
+    "cfs-logos/1.webp",
+    "cfs-logos/2.webp",
+    "cfs-logos/1.webp",
+    "cfs-logos/2.webp",
+    "cfs-logos/3.webp",
+    "cfs-logos/4.webp",
+    "cfs-logos/4.webp",
+    "cfs-logos/4.webp",
+    "cfs-logos/5.webp",
+    "cfs-logos/6.webp",
+    "cfs-logos/6.webp",
+    "cfs-logos/6.webp",
+    "cfs-logos/6.webp",
+  ];
+
+  const click_pick = [
+    "hero-banner/bannerhero1.webp",
+    "hero-banner/bannerhero2.webp",
+    "hero-banner/bannerhero3.webp",
+    "hero-banner/bannerhero4.webp",
+    "hero-banner/bannerhero5.webp",
+    "hero-banner/cfs-hero.webp",
+  ];
+
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -40,7 +69,7 @@ export default function PortfolioPage() {
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 30 + 20,
+    size: Math.random() * 30 + 100,
     delay: Math.random() * 2,
   }))
 
@@ -267,40 +296,43 @@ export default function PortfolioPage() {
         const animations = isScaryMode
           ? ["animate-frozen"]
           : [
-              "animate-spin360",
-              "animate-bounce3d",
-              "animate-float",
-              "animate-wiggle",
-              "animate-pulse-scale",
-              "animate-skew",
-              "animate-shake",
-            ]
+            "animate-spin360",
+            "animate-bounce3d",
+            "animate-float",
+            "animate-wiggle",
+            "animate-pulse-scale",
+            "animate-skew",
+            "animate-shake",
+          ]
         const randomAnimation = animations[Math.floor(Math.random() * animations.length)]
+
+        const randomImage = cfs_images[Math.floor(Math.random() * cfs_images.length)];
+
 
         return (
           <div
             key={symbol.id}
             className={`symbol ${randomAnimation} ${isJerking ? "jerk-all" : ""}`}
             style={{
+              position: "absolute",
               left: `${symbol.x}%`,
               top: `${symbol.y}%`,
-              fontSize: `${symbol.size}px`,
-              color: themeColors.symbolColor,
-              textShadow: `0 0 10px ${themeColors.symbolColor}, 0 0 20px ${themeColors.symbolGlow}`,
+              width: `${symbol.size}px`,
+              height: `${symbol.size}px`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
               animationDelay: `${symbol.delay}s`,
-              opacity: Math.random() * 0.6 + 0.4,
+              backgroundImage: `url(${randomImage})`,
             }}
-          >
-            $f$
-          </div>
+          />
         )
       })}
 
       <div
-        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-8 px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
+        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-0 px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
       >
         <h1
-          className={`text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
+          className={`text-4xl sm:text-5xl md:text-7xl lg:text-[196px] mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
           style={{
             animation: "slide-in 1s ease-out",
             color: themeColors.title,
@@ -332,121 +364,25 @@ export default function PortfolioPage() {
         </div>
 
         <div
-          className={`relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto ${isJerking ? "jerk-all" : ""}`}
+          className="relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto"
+          style={{ position: "relative" }}
         >
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              left: "5%",
-              top: "0%",
-              width: "clamp(120px, 15vw, 224px)",
-              height: "clamp(120px, 15vw, 192px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                : "linear-gradient(135deg, #a8dadc 0%, #c4b5fd 100%)",
-              animation: "bounce3d 2.5s ease-in-out infinite",
-              animationDelay: "0s",
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              left: "30%",
-              top: "-5%",
-              width: "clamp(140px, 18vw, 256px)",
-              height: "clamp(140px, 18vw, 224px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                : "linear-gradient(135deg, #faa5a5 0%, #f5a5a5 100%)",
-              animation: "spin360 5s linear infinite",
-              animationDelay: "0.2s",
-              border: `3px solid ${isDark ? "#fff" : "#333"}`,
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              right: "5%",
-              top: "5%",
-              width: "clamp(130px, 17vw, 240px)",
-              height: "clamp(130px, 17vw, 208px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                : "linear-gradient(135deg, #a8d8ff 0%, #a8e6ff 100%)",
-              animation: "pulse-scale 2s ease-in-out infinite",
-              animationDelay: "0.4s",
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              left: "0%",
-              bottom: "5%",
-              width: "clamp(110px, 14vw, 208px)",
-              height: "clamp(130px, 17vw, 240px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
-                : "linear-gradient(135deg, #f5c5a8 0%, #fff5a8 100%)",
-              animation: "wiggle 1.5s ease-in-out infinite",
-              animationDelay: "0.6s",
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              left: "35%",
-              bottom: "0%",
-              width: "clamp(140px, 18vw, 256px)",
-              height: "clamp(120px, 15vw, 192px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
-                : "linear-gradient(135deg, #a8eda8 0%, #a8edc8 100%)",
-              animation: "skew 2.5s ease-in-out infinite",
-              animationDelay: "0.8s",
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              right: "0%",
-              bottom: "10%",
-              width: "clamp(120px, 15vw, 224px)",
-              height: "clamp(120px, 15vw, 224px)",
-              position: "absolute",
-              background: isDark
-                ? "linear-gradient(135deg, #fa8b00 0%, #ffc107 100%)"
-                : "linear-gradient(135deg, #ffd4a8 0%, #ffe8a8 100%)",
-              animation: "float 4s ease-in-out infinite",
-              animationDelay: "1s",
-            }}
-          />
-
-          <div
-            className="rounded-lg shadow-2xl transition-all duration-500"
-            style={{
-              left: "50%",
-              top: "50%",
-              width: "clamp(120px, 15vw, 192px)",
-              height: "clamp(140px, 18vw, 224px)",
-              position: "absolute",
-              transform: "translate(-50%, -50%)",
-              background: isDark
-                ? "linear-gradient(135deg, #ff00ff 0%, #00ffff 100%)"
-                : "linear-gradient(135deg, #f0a8ff 0%, #a8f0ff 100%)",
-              animation: "bounce3d 3s ease-in-out infinite",
-              animationDelay: "1.2s",
-            }}
-          />
+          {click_pick.map((image, index) => (
+            <div
+              key={index}
+              className="rounded-lg shadow-2xl transition-all duration-500"
+              style={{
+                position: "absolute",
+                width: "clamp(120px, 15vw, 224px)",
+                height: "clamp(120px, 15vw, 192px)",
+                backgroundImage: `url(${image})`,
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                animation: "bounce3d 2.5s ease-in-out infinite",
+                animationDelay: `${index * 0.2}s`,
+              }}
+            />
+          ))}
         </div>
 
         <div
