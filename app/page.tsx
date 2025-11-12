@@ -1,43 +1,77 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+
+const cfs_images = [
+  "cfs-logos/1.webp",
+  "cfs-logos/2.webp",
+  "cfs-logos/1.webp",
+  "cfs-logos/2.webp",
+  "cfs-logos/1.webp",
+  "cfs-logos/2.webp",
+  "cfs-logos/1.webp",
+  "cfs-logos/2.webp",
+  "cfs-logos/3.webp",
+  "cfs-logos/4.webp",
+  "cfs-logos/4.webp",
+  "cfs-logos/4.webp",
+  "cfs-logos/5.webp",
+  "cfs-logos/6.webp",
+  "cfs-logos/6.webp",
+  "cfs-logos/6.webp",
+  "cfs-logos/6.webp",
+];
+
+const click_pick = [
+  "hero-banner/banehero1.webp",
+  "hero-banner/banehero2.webp",
+  "hero-banner/banehero3.webp",
+  "hero-banner/banehero4.webp",
+  "hero-banner/banehero5.webp",
+  "hero-banner/cfs-hero.webp",
+]
 
 export default function PortfolioPage() {
   const [mounted, setMounted] = useState(false)
   const [isDark, setIsDark] = useState(false)
   const [isJerking, setIsJerking] = useState(false)
   const [toggleCount, setToggleCount] = useState(0)
-  const [showWarning, setShowWarning] = useState(false)
   const [isScaryMode, setIsScaryMode] = useState(false)
+  const clickPickElementsRef = useRef<any[]>([])
 
-  const cfs_images = [
-    "cfs-logos/1.webp",
-    "cfs-logos/2.webp",
-    "cfs-logos/1.webp",
-    "cfs-logos/2.webp",
-    "cfs-logos/1.webp",
-    "cfs-logos/2.webp",
-    "cfs-logos/1.webp",
-    "cfs-logos/2.webp",
-    "cfs-logos/3.webp",
-    "cfs-logos/4.webp",
-    "cfs-logos/4.webp",
-    "cfs-logos/4.webp",
-    "cfs-logos/5.webp",
-    "cfs-logos/6.webp",
-    "cfs-logos/6.webp",
-    "cfs-logos/6.webp",
-    "cfs-logos/6.webp",
-  ];
+  const generateClickPickElements = () => {
+    if (clickPickElementsRef.current.length > 0) {
+      return clickPickElementsRef.current
+    }
 
-  const click_pick = [
-    "hero-banner/bannerhero1.webp",
-    "hero-banner/bannerhero2.webp",
-    "hero-banner/bannerhero3.webp",
-    "hero-banner/bannerhero4.webp",
-    "hero-banner/bannerhero5.webp",
-    "hero-banner/cfs-hero.webp",
-  ];
+    const elements = []
+    const centerX = typeof window !== "undefined" ? window.innerWidth / 2 : 0
+    const centerY = typeof window !== "undefined" ? window.innerHeight / 2 : 0
+    const cardWidth = 224
+    const cardHeight = 192
+    const gridSize = 280
+
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2
+      const distance = 200
+      const offsetX = Math.cos(angle) * distance
+      const offsetY = Math.sin(angle) * distance
+
+      elements.push({
+        left: `calc(50% + ${offsetX}px - 112px)`,
+        top: `calc(50% + ${offsetY}px - 96px)`,
+        rotAxis: ["rotateX", "rotateY", "rotateZ"][i % 3],
+        zIndex: 6 - i,
+        delay: Math.random() * 2,
+        entranceDelay: i * 0.5,
+        animation: ["bounce3d", "spin360", "pulse-scale", "wiggle", "skew", "float"][i],
+        image: click_pick[i],
+      })
+    }
+
+    clickPickElementsRef.current = elements
+    return elements
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -46,21 +80,18 @@ export default function PortfolioPage() {
   const handleThemeToggle = () => {
     if (isScaryMode) return
 
-    if (toggleCount === 0) {
-      setIsJerking(true)
-      setTimeout(() => setIsJerking(false), 300)
-      setIsDark(true)
-      setToggleCount(1)
-    } else if (toggleCount === 1) {
-      setShowWarning(true)
-    }
-  }
-
-  const handleWarningClick = () => {
-    setIsScaryMode(true)
-    setShowWarning(false)
+    const newToggleCount = toggleCount + 1
+    setToggleCount(newToggleCount)
     setIsJerking(true)
     setTimeout(() => setIsJerking(false), 300)
+
+    if (newToggleCount === 1) {
+      setIsDark(true)
+    } else if (newToggleCount === 2) {
+      setIsDark(false)
+    } else if (newToggleCount === 3) {
+      setIsScaryMode(true)
+    }
   }
 
   if (!mounted) return null
@@ -71,6 +102,7 @@ export default function PortfolioPage() {
     y: Math.random() * 100,
     size: Math.random() * 30 + 100,
     delay: Math.random() * 2,
+    selectedImage: cfs_images[i % cfs_images.length],
   }))
 
   const themeColors = {
@@ -82,6 +114,8 @@ export default function PortfolioPage() {
     symbolGlow: isScaryMode ? "rgba(255, 0, 0, 0.8)" : isDark ? "rgba(34, 255, 0, 0.5)" : "rgba(255, 0, 110, 0.4)",
     footer: isScaryMode ? "#660000" : isDark ? "text-gray-400" : "text-gray-600",
   }
+
+  const clickPickElements = generateClickPickElements()
 
   return (
     <div
@@ -144,6 +178,16 @@ export default function PortfolioPage() {
           100% { transform: scale(1) rotate(0deg); }
         }
 
+        @keyframes polka-pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+
+        @keyframes slide-in-card {
+          0% { transform: translateY(30px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+
         .animate-spin360 {
           animation: spin360 4s linear infinite;
         }
@@ -182,10 +226,19 @@ export default function PortfolioPage() {
 
         .symbol {
           position: absolute;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
           font-weight: 900;
-          font-size: 1.2em;
-          text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+          font-size: 0.8em;
           transition: color 0.5s ease;
+        }
+
+        .polka-dot {
+          animation: polka-pulse 1.5s ease-in-out infinite;
+          border-radius: 50%;
+          margin: 2px;
         }
 
         .toggle-btn {
@@ -229,67 +282,12 @@ export default function PortfolioPage() {
           background: linear-gradient(135deg, #ff006e 0%, #ff0055 100%);
           color: #fff;
         }
-
-        .warning-box {
-          position: fixed;
-          top: 70px;
-          right: 12px;
-          background: rgba(255, 0, 0, 0.9);
-          color: white;
-          padding: 12px 16px;
-          border-radius: 8px;
-          font-size: 12px;
-          font-weight: 700;
-          z-index: 51;
-          max-width: 200px;
-          box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-          animation: slide-in 0.3s ease-out;
-          border: 2px solid #ff0000;
-          text-align: center;
-        }
-
-        @media (min-width: 768px) {
-          .warning-box {
-            top: 80px;
-            right: 20px;
-            font-size: 13px;
-            padding: 14px 18px;
-            max-width: 220px;
-          }
-        }
-
-        .warning-btn {
-          background: #ffff00;
-          color: #000;
-          border: none;
-          padding: 6px 12px;
-          border-radius: 4px;
-          font-weight: 700;
-          font-size: 11px;
-          cursor: pointer;
-          margin-top: 8px;
-          transition: all 0.2s ease;
-        }
-
-        .warning-btn:hover {
-          background: #ffffff;
-          transform: scale(1.05);
-        }
       `}</style>
 
       {!isScaryMode && (
         <button onClick={handleThemeToggle} className={`toggle-btn ${isDark ? "toggle-btn-dark" : "toggle-btn-light"}`}>
           {isDark ? "☀️ BRIGHT" : "🌙 DARK"}
         </button>
-      )}
-
-      {showWarning && (
-        <div className="warning-box">
-          <p>⚠️ AVOID CHANGING TO DARK MODE AGAIN</p>
-          <button className="warning-btn" onClick={handleWarningClick}>
-            I UNDERSTAND
-          </button>
-        </div>
       )}
 
       {symbols.map((symbol) => {
@@ -306,9 +304,6 @@ export default function PortfolioPage() {
           ]
         const randomAnimation = animations[Math.floor(Math.random() * animations.length)]
 
-        const randomImage = cfs_images[Math.floor(Math.random() * cfs_images.length)];
-
-
         return (
           <div
             key={symbol.id}
@@ -319,17 +314,31 @@ export default function PortfolioPage() {
               top: `${symbol.y}%`,
               width: `${symbol.size}px`,
               height: `${symbol.size}px`,
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
               animationDelay: `${symbol.delay}s`,
-              backgroundImage: `url(${randomImage})`,
+              color: themeColors.symbolColor,
+              textShadow: `0 0 10px ${themeColors.symbolGlow}, 0 0 20px ${themeColors.symbolGlow}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          />
+          >
+            <img
+              src={symbol.selectedImage || "/placeholder.svg"}
+              alt="cfs logo"
+              style={{
+                borderRadius: "50%",
+                opacity: 0.7,
+                animation: isScaryMode
+                  ? "pulse-scale-frozen 0.1s ease-out forwards"
+                  : "polka-pulse 1.5s ease-in-out infinite",
+              }}
+            />
+          </div>
         )
       })}
 
       <div
-        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-0 px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
+        className={`relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 ${isJerking ? "jerk-all" : ""}`}
       >
         <h1
           className={`text-4xl sm:text-5xl md:text-7xl lg:text-[196px] mb-8 sm:mb-12 drop-shadow-lg transition-colors duration-500 ${isJerking ? "jerk-all" : ""} text-center`}
@@ -364,25 +373,51 @@ export default function PortfolioPage() {
         </div>
 
         <div
-          className="relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto"
-          style={{ position: "relative" }}
+          className="relative w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl h-auto sm:h-96 md:h-500px lg:h-600px mb-8 aspect-square sm:aspect-auto flex items-center justify-center"
+          style={{ position: "relative", perspective: "1000px" }}
         >
-          {click_pick.map((image, index) => (
-            <div
-              key={index}
-              className="rounded-lg shadow-2xl transition-all duration-500"
-              style={{
-                position: "absolute",
-                width: "clamp(120px, 15vw, 224px)",
-                height: "clamp(120px, 15vw, 192px)",
-                backgroundImage: `url(${image})`,
-                backgroundSize: "contain",
-                backgroundRepeat: "no-repeat",
-                animation: "bounce3d 2.5s ease-in-out infinite",
-                animationDelay: `${index * 0.2}s`,
-              }}
-            />
-          ))}
+          {clickPickElements.map((element, index) => {
+            const animationNameMap: { [key: string]: string } = {
+              spin360: "spin360",
+              bounce3d: "bounce3d",
+              "pulse-scale": "pulse-scale",
+              wiggle: "wiggle",
+              skew: "skew",
+              float: "float",
+            }
+            const animationName = animationNameMap[element.animation] || "spin360"
+
+            return (
+              <div
+                key={index}
+                className={`rounded-lg shadow-2xl transition-all duration-500 ${isScaryMode ? "animate-frozen" : ""} ${isJerking ? "jerk-all" : ""}`}
+                style={{
+                  position: "absolute",
+                  width: "clamp(120px, 15vw, 224px)",
+                  height: "clamp(120px, 15vw, 192px)",
+                  left: element.left,
+                  top: element.top,
+                  zIndex: element.zIndex,
+                  overflow: "hidden",
+                  transformOrigin: "center",
+                  animation: isScaryMode
+                    ? `slide-in-card 0.6s ease-out ${element.entranceDelay}s forwards, pulse-scale-frozen 0.1s ease-out ${element.entranceDelay + 0.6}s forwards`
+                    : `slide-in-card 0.6s ease-out ${element.entranceDelay}s forwards, ${animationName} 2s ease-in-out ${element.entranceDelay + 0.6}s infinite`,
+                }}
+              >
+                <img
+                  src={click_pick[index % click_pick.length] || "/placeholder.svg"}
+                  alt={`Portfolio piece ${index + 1}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </div>
+            )
+          })}
         </div>
 
         <div
